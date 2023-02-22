@@ -3,3 +3,5 @@ selenium
 requests
 discord.py-self-embed
 pyyaml
+pyautogui
+opencv-python
