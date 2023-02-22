@@ -1,0 +1,5 @@
+discord.py-self==1.8.0
+selenium
+requests
+discord.py-self-embed
+pyyaml

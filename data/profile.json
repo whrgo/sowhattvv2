@@ -1,0 +1,12 @@
+{
+    "profiles": [
+        {
+            "profileName": "마로",
+            "profileDesc": "=거의다됨"
+        },
+        {
+            "profileName": "노슬",
+            "profileDesc": "=마로"
+        }
+    ]
+}
