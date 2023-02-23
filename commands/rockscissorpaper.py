@@ -24,6 +24,8 @@ class RockScissorPaperGameView(discord.ui.View):
         self.PAPER_ID = 2
         self.emojis = ["✌️", "✊", "🖐️"]
 
+        self.isNotEnded = True
+
     scissor_emoji = "✌️"
     rock_emoji = "✊"
     paper_emoji = "🖐️"
@@ -59,58 +61,62 @@ class RockScissorPaperGameView(discord.ui.View):
             return False
 
     def ending(self):
-        usersID: list[int] = [self.users[0].id, self.users[1].id]
-        with open(f"./data/games/{self.GAME_ID}.json", "r") as f:
-            data = json.load(f)
+        if self.isNotEnded:
+            self.isNotEnded = False
+            usersID: list[int] = [self.users[0].id, self.users[1].id]
+            with open(f"./data/games/{self.GAME_ID}.json", "r") as f:
+                data = json.load(f)
 
-        user0_action = data[str(usersID[0])][0]
-        user1_action = data[str(usersID[1])][0]
-        result = 0
-        '''
-        Result 구분
-        0: 비김
-        1: 유저 0이 이김
-        -1 유저 1이 이김
-        '''
+            user0_action = data[str(usersID[0])][0]
+            user1_action = data[str(usersID[1])][0]
+            result = 0
+            '''
+            Result 구분
+            0: 비김
+            1: 유저 0이 이김
+            -1 유저 1이 이김
+            '''
 
-        if user0_action == user1_action:
-            result = 0  # 비김
-        elif user0_action == self.ROCK_ID:  # User0이 주먹을 냈다면
-            if user1_action == self.SCISSOR_ID:  # User1이 가위를 냈다면
-                result = 1  # User0 승리
-            else:  # User1이 보자기를 냈다면
-                result = -1  # User1 승리
-        elif user0_action == self.PAPER_ID:  # User0이 보자기을 냈다면
-            if user1_action == self.ROCK_ID:  # User1이 주먹를 냈다면
-                result = 1  # User0 승리
-            else:  # User1이 가위를 냈다면
-                result = -1  # User1 승리
-        elif user0_action == self.SCISSOR_ID:  # User0이 가위을 냈다면
-            if user1_action == self.PAPER_ID:  # User1이 보자기를 냈다면
-                result = 1  # User0 승리
-            else:  # User1이 주먹를 냈다면
-                result = -1  # User1 승리
+            if user0_action == user1_action:
+                result = 0  # 비김
+            elif user0_action == self.ROCK_ID:  # User0이 주먹을 냈다면
+                if user1_action == self.SCISSOR_ID:  # User1이 가위를 냈다면
+                    result = 1  # User0 승리
+                else:  # User1이 보자기를 냈다면
+                    result = -1  # User1 승리
+            elif user0_action == self.PAPER_ID:  # User0이 보자기을 냈다면
+                if user1_action == self.ROCK_ID:  # User1이 주먹를 냈다면
+                    result = 1  # User0 승리
+                else:  # User1이 가위를 냈다면
+                    result = -1  # User1 승리
+            elif user0_action == self.SCISSOR_ID:  # User0이 가위을 냈다면
+                if user1_action == self.PAPER_ID:  # User1이 보자기를 냈다면
+                    result = 1  # User0 승리
+                else:  # User1이 주먹를 냈다면
+                    result = -1  # User1 승리
 
-        embed = discord.Embed(
-            title="", description="")
-        if result == 0:
-            embed.description += f"```asciidoc\n📢 결과 발표 📢\n================\n[공동승리]\n- {self.users[0].name}\n- {self.users[1].name}```"
-            embed.description += f"{self.users[0].mention}님이\{self.emojis[user0_action]}\n{self.users[1].mention}님이\{self.emojis[user1_action]}으로 비겼습니다"
-            embed.set_author(
-                name="비겼습니다", icon_url=self.ctx.author.display_avatar)
-        elif result == 1:  # self.users[0] win
-            embed.description += f"```asciidoc\n📢 결과 발표 📢\n================\n[승리]\n- {self.users[0].name}\n[패배]\n- {self.users[1].name}```"
-            embed.description += f"{self.users[0].mention}님이\{self.emojis[user0_action]}\n{self.users[1].mention}님이\{self.emojis[user1_action]}으로 {self.users[0].mention}님이 승리하셧습니다"
-            embed.set_author(
-                name=f"{self.users[0].name} 승리", icon_url=self.users[0].display_avatar)
-        elif result == -1:  # self.users[1] win
-            embed.description += f"```asciidoc\n📢 결과 발표 📢\n================\n[승리]\n- {self.users[1].name}\n[패배]\n- {self.users[0].name}```"
-            embed.description += f"{self.users[0].mention}님이\{self.emojis[user0_action]}\n{self.users[1].mention}님이\{self.emojis[user1_action]}으로\n{self.users[1].mention}님이 승리하셧습니다"
-            embed.set_author(
-                name=f"{self.users[1].name} 승리", icon_url=self.users[1].display_avatar)
-        embed.set_footer(text="게임이 종료되었어요")
-        embed.timestamp = datetime.datetime.now()
-        return embed
+            embed = discord.Embed(
+                title="", description="")
+            if result == 0:
+                embed.description += f"```asciidoc\n📢 결과 발표 📢\n================\n[공동승리]\n- {self.users[0].name}\n- {self.users[1].name}```"
+                embed.description += f"{self.users[0].mention}님이\{self.emojis[user0_action]}\n{self.users[1].mention}님이\{self.emojis[user1_action]}으로 비겼습니다"
+                embed.set_author(
+                    name="비겼습니다", icon_url=self.ctx.author.display_avatar)
+            elif result == 1:  # self.users[0] win
+                embed.description += f"```asciidoc\n📢 결과 발표 📢\n================\n[승리]\n- {self.users[0].name}\n[패배]\n- {self.users[1].name}```"
+                embed.description += f"{self.users[0].mention}님이\{self.emojis[user0_action]}\n{self.users[1].mention}님이\{self.emojis[user1_action]}으로 {self.users[0].mention}님이 승리하셧습니다"
+                embed.set_author(
+                    name=f"{self.users[0].name} 승리", icon_url=self.users[0].display_avatar)
+            elif result == -1:  # self.users[1] win
+                embed.description += f"```asciidoc\n📢 결과 발표 📢\n================\n[승리]\n- {self.users[1].name}\n[패배]\n- {self.users[0].name}```"
+                embed.description += f"{self.users[0].mention}님이\{self.emojis[user0_action]}\n{self.users[1].mention}님이\{self.emojis[user1_action]}으로\n{self.users[1].mention}님이 승리하셧습니다"
+                embed.set_author(
+                    name=f"{self.users[1].name} 승리", icon_url=self.users[1].display_avatar)
+            embed.set_footer(text="게임이 종료되었어요")
+            embed.timestamp = datetime.datetime.now()
+            return embed
+        else:
+            return False
 
     async def processing_interaction(self, interaction: discord.interactions.Interaction, select: int):
         if self.selCallback(select, interaction.user.id):
@@ -125,7 +131,10 @@ class RockScissorPaperGameView(discord.ui.View):
 
             if self.checkAllSelected():
                 embed = self.ending()
-                await interaction.message.reply(content=None, embed=embed, view=None)
+                if embed == False:
+                    return
+                else:
+                    await interaction.message.reply(content=None, embed=embed, view=None)
         else:
             await interaction.response.defer()
 
