@@ -152,12 +152,23 @@ class PyautoguiID(discord.Cog):
                 title=f"({mnums[0]}) ​{operator} ​({mnums[1]})")
             await interaction.response.send_message(content="원본 이미지를 보려면 수학문제를 풀어야해요!", embed=problem_embed, view=view, ephemeral=True)
 
+        async def delete_image_button_callback(interaction: discord.interactions.Interaction):
+            if ctx.author.id == interaction.user.id:
+                await interaction.response.defer()
+                await ctx.delete()
+            else:
+                await interaction.response.defer()
+
         get_original_image_button = discord.ui.Button(
             label="원본 이미지 보기", style=discord.ButtonStyle.grey)
         get_original_image_button.callback = get_original_image_button_callback
+        delete_image_button = discord.ui.Button(
+            label="삭제", style=discord.ButtonStyle.red)
+        delete_image_button.callback = delete_image_button_callback
 
         view = discord.ui.View(timeout=None)
         view.add_item(get_original_image_button)
+        view.add_item(delete_image_button)
 
         with open(mosaic_filename, "rb") as f:
             file = discord.File(f, mosaic_filename, spoiler=True)
