@@ -1,8 +1,9 @@
 config.yml
 account.py
-games/*
-problems/*
-votes/*
+games/
+problems/
+votes/
+temp/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
