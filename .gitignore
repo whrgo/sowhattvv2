@@ -4,6 +4,7 @@ games/
 problems/
 votes/
 temp/
+attendance/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
